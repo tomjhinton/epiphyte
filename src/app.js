@@ -9,7 +9,10 @@ import axios from 'axios'
 import Home from './components/main/Home'
 import Header from './components/main/Header'
 import Footer from './components/main/Footer'
+import Login from './components/user/Login'
+import Register from './components/user/Register'
 
+const coinsArr = ['bitcoin','ethereum','ripple','tether','bitcoin-cash','litecoin','eos','binance-coin','bitcoin-sv','cosmos','tezos','stellar','cardano','tron','unus-sed-leo','monero','huobi-token','chainlink','neo','maker']
 
 class App extends React.Component {
   constructor(){
@@ -21,7 +24,13 @@ class App extends React.Component {
 
   componentDidMount() {
     axios.get('https://api.coincap.io/v2/assets')
-      .then(res => this.setState({ coins: res.data }))
+      .then(res => {
+        console.log(res)
+        res.data.data = res.data.data.filter(x=> {
+          return coinsArr.includes(x.id)
+        })
+        this.setState({ coins: res.data })
+      })
   }
 
   render() {
@@ -31,8 +40,10 @@ class App extends React.Component {
         <main>
           <Header />
           <Switch>
+          <Route path="/register" component={Register} />
+            <Route path="/login" component={Login} />
             <Route path="/"
-          render={(state) => <Home {...state} coins={this.state.coins} />} />
+              render={(state) => <Home {...state} coins={this.state.coins} />} />
 
           </Switch>
 

@@ -2,8 +2,28 @@
 import React from 'react'
 import axios from 'axios'
 import {Link} from 'react-router-dom'
+import Auth from '../../lib/Auth'
 
-
+const coinsArr = ['bitcoin',
+'ethereum'
+,'ripple'
+,'tether'
+,'bitcoin-cash'
+,'litecoin'
+,'eos'
+,'binance-coin'
+,'bitcoin-sv'
+,'cosmos'
+,'tezos'
+,'stellar'
+,'cardano'
+,'tron'
+,'unus-sed-leo'
+,'monero'
+,'huobi-token'
+,'chainlink'
+,'neo'
+,'maker']
 
 
 class Home extends React.Component{
@@ -28,13 +48,13 @@ class Home extends React.Component{
 
   render() {
 
-    console.log(this.props.coins)
-    console.log(this.state)
+    // console.log(this.props.coins)
+    // console.log(this.state)
 
     return (
       <div className='container'>
-      HIYA
-      {this.props.coins && this.props.coins.data.map(x=>  {
+
+      {!Auth.isAuthenticated() &&this.props.coins && this.props.coins.data.map(x=>  {
         return(
         <div key={x.id}>
         {x.name} : {x.priceUsd}
