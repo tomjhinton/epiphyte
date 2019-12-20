@@ -42,12 +42,11 @@ class Header extends React.Component{
           <div className={`navbar-menu${this.state.active ? ' is-active' : ''}`}>
             <div className="navbar-start">
 
-              {Auth.isAuthenticated() &&<Link to="/new" className={`navbar-item ${this.state.active ? ' is-active' : ''} `}>Add a piece</Link>}
+
             </div>
 
             <div className="navbar-start">
 
-              {Auth.isAuthenticated() &&<Link to="/recruit" className={`navbar-item ${this.state.active ? ' is-active' : ''} `}>Recruit people for a project</Link>}
             </div>
 
             <div className="navbar-end">

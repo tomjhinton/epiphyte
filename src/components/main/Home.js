@@ -25,6 +25,8 @@ const coinsArr = ['bitcoin',
 ,'neo'
 ,'maker']
 
+const user = Auth.getPayload()
+//console.log(user)
 
 class Home extends React.Component{
   constructor(props){
@@ -32,34 +34,45 @@ class Home extends React.Component{
     this.state = {
       data: {},
       error: '',
-      coins: this.props.coins
+      coins: this.props.coins,
+      user: ''
 
     }
     this.componentDidMount = this.componentDidMount.bind(this)
+
   }
 
 
   componentDidMount(){
-    // axios.get('/api/records')
-    //   .then(res => this.setState({ records: res.data }))
-
+    axios.get(`/api/users/${user.sub}`)
+      .then(res => this.setState({user: res.data}))
+    console.log(this.state)
 
   }
 
   render() {
 
     // console.log(this.props.coins)
-    // console.log(this.state)
+     console.log(Object.entries(this.state.user))
 
     return (
       <div className='container'>
 
-      {!Auth.isAuthenticated() &&this.props.coins && this.props.coins.data.map(x=>  {
-        return(
-        <div key={x.id}>
-        {x.name} : {x.priceUsd}
-        </div>)
-      })}
+        {!Auth.isAuthenticated() &&this.props.coins && this.props.coins.data.map(x=>  {
+          return(
+            <div key={x.id}>
+            {x.name} : {x.priceUsd}
+            </div>)
+        })}
+        {Auth.isAuthenticated() &&this.props.coins && this.state.user && this.props.coins.data.map(x=>  {
+          return(
+            <div key={x.id}>
+            {x.name} : {x.priceUsd * 1}
+            </div>)
+        })
+      }
+
+
 
 
       </div>

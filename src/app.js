@@ -40,7 +40,7 @@ class App extends React.Component {
         <main>
           <Header />
           <Switch>
-          <Route path="/register" component={Register} />
+            <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
             <Route path="/"
               render={(state) => <Home {...state} coins={this.state.coins} />} />
