@@ -27,8 +27,10 @@ class Home extends React.Component{
 
 
   componentDidMount(){
+    if(Auth.isAuthenticated()){
     axios.get(`/api/users/${user.sub}`)
       .then(res => this.setState({user: res.data}))
+    }
 
   }
 
@@ -41,18 +43,28 @@ class Home extends React.Component{
 
   buy(e){
     console.log('hiya '+e.target.id)
+
+    const value = document.getElementById(e.target.id+'Value')
+    if(this.state.user.dollars> parseFloat(value.value)){
     this.setState({user: {
       ...this.state.user,
-      [e.target.id]: this.state.user[e.target.id] +1}
+      [e.target.id]: this.state.user[e.target.id] +(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
+      dollars: this.state.user.dollars -(parseFloat(value.value))}
     })
+  }
+
   }
 
   sell(e){
     console.log('hiya '+e.target.id)
+    const value = document.getElementById(e.target.id+'Value')
+    if(this.state.user[e.target.id]-(parseFloat(value.value)/parseFloat(value.getAttribute('data-key')))>0 ){
     this.setState({user: {
       ...this.state.user,
-      [e.target.id]: this.state.user[e.target.id] -1}
+      [e.target.id]: this.state.user[e.target.id] -(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
+      dollars: this.state.user.dollars+parseFloat(value.value)}
     })
+  }
   }
 
 
@@ -83,18 +95,26 @@ class Home extends React.Component{
         })
         }
         <hr/>
+        <div>Portfolio </div>
+        <div>Dollars: {this.state.user.dollars}</div>
         {values && this.props.coins && values.map(x=>{
           return(
             <div key={x[0]}>
               {this.props.coins.data.map(a=> { if(x[0]===a.id){
                 return(
                   <div>
-                  <span key={a.id}>
-                    {a.name} : {a.priceUsd * x[1]}
-                  </span> <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.buy}> buy</div> <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.sell}> sell</div>
-                </div>)
+                    <span key={a.id}>
+                      {a.name} :$ {a.priceUsd * x[1]}
+                    </span>
+                    <input key={a.priceUsd} data-key={a.priceUsd} type="number" defaultValue={0} id={a.id.replace(/-/g, '_')+'Value'}
+                    />
+                    <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.buy}> buy</div> <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.sell}> sell</div>
+
+                  </div>
+                )
               }
               })}
+
 
             </div>
           )
