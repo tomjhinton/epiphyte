@@ -20,7 +20,23 @@ class App extends React.Component {
 
     this.state = {
     }
+    this.componentDidMount = this.componentDidMount.bind(this)
+    this.updateCoins = this.updateCoins.bind(this)
+
   }
+
+  updateCoins(){
+    axios.get('https://api.coincap.io/v2/assets')
+      .then(res => {
+        console.log(res)
+        res.data.data = res.data.data.filter(x=> {
+          return coinsArr.includes(x.id)
+        })
+        this.setState({ coins: res.data })
+        console.log(this.state)
+      })
+  }
+
 
   componentDidMount() {
     axios.get('https://api.coincap.io/v2/assets')
@@ -31,7 +47,13 @@ class App extends React.Component {
         })
         this.setState({ coins: res.data })
       })
+
+      this.interval = setInterval(() => {
+        this.updateCoins();
+      }, 100000);
   }
+
+
 
   render() {
     return (
