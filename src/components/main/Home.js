@@ -11,9 +11,10 @@ let  dataValues
 let  dataNames
 let dataColors
 let  myChart
+let total
 const user = Auth.getPayload()
 //console.log(user)
-
+let direction = ['toLeft', 'toRight']
 class Home extends React.Component{
   constructor(props){
     super(props)
@@ -21,7 +22,8 @@ class Home extends React.Component{
       data: {},
       error: '',
       coins: {},
-      user: ''
+      user: { total:0
+      }
 
     }
     this.componentDidMount = this.componentDidMount.bind(this)
@@ -114,8 +116,8 @@ class Home extends React.Component{
 
 
   render() {
-    dataValues=[]
-    dataNames=[]
+    dataValues=[this.state.user.dollars]
+    dataNames=['Dollars']
     dataColors = []
     console.log(this.state)
     let values  = Object.entries(this.state.user)
@@ -123,8 +125,8 @@ class Home extends React.Component{
       return(
         [ x[0].replace(/_/g, '-'),x[1]])
     })
-
     console.log(values)
+
 
     return (
       <div className='container'>
@@ -135,55 +137,70 @@ class Home extends React.Component{
               {x.name} : {x.priceUsd}
             </div>)
         })}
-        {this.props.coins &&<Ticker  mode='smooth'>
-        {({ index }) => (
-            <>
-            {index}
+
 
         {Auth.isAuthenticated() &&this.props.coins && this.state.user && this.props.coins.data.map(x=>  {
           return(
+            <Ticker key={x.id} className='ticker' speed={Math.floor(Math.random()*6)+2} direction={direction[Math.floor(Math.random()*2)]}>
+            {({ index }) => (
+                <>
+
             <div key={x.id}>
-              {x.id} : {x.priceUsd}
-            </div>)
+              {' '+ x.name +'  ' } : {x.priceUsd +' --   '  }
+            </div>
+            </>
+          )}
+
+            </Ticker>)
         })
         }
-        </>
-      )}
 
-        </Ticker>}
         <hr/>
         <div>Portfolio </div>
+        <div className='columns'>
+        <div className='column is-half'>
         <canvas id="myChart" width="600" height="600"></canvas>
+        </div>
+        <div className='column'>
+          Portfolio Current Value: $ {this.state.user.total}</div>
+          Current Cash To Spend: {this.state.user.dollars}
+          </div>
 
-        <div className="portfolio columns is-multiline">
-        <div className="column is-half">Dollars: {this.state.user.dollars}</div>
+        <div className="portfolio tile is-ancestor">
         {values && this.props.coins && values.map(x=>{
           return(
-            <div key={x[0]} className="column is-one-third">
-              {this.props.coins.data.map(a=> { if(x[0]===a.id){
+            this.props.coins.data.map(a=> { if(x[0]===a.id){
+
                 dataValues.push(a.priceUsd * x[1])
+                total =  dataValues.reduce((a,b)=> a+b,0)
+                console.log(total)
+
                 dataNames.push(a.name)
                 dataColors.push(this.dynamicColors())
                 return(
-                  <div >
-                  <div>
-                    <span key={a.id}>
-                      {a.name} :$ {a.priceUsd * x[1]}
-                    </span>
-                    <input key={a.priceUsd} data-key={a.priceUsd} type="number" defaultValue={0} id={a.id.replace(/-/g, '_')+'Value'}
-                    />
+            <div key={x[0]} className="tile is-3 is-parent box">
+
+
+                  <div className="tile is-child box" >
+
+                    <div key={a.id}>
+                      <p className="title">{a.name}</p>
+                      <p>Current Coin Value :</p><p>{parseFloat(a.priceUsd).toFixed(7)}</p>
+                      <p>You hold:</p> <p>$ {parseFloat(a.priceUsd * x[1]).toFixed(7)}</p>
+                    </div>
+                    $<input placeholder="$" key={a.priceUsd} data-key={a.priceUsd} type="number" defaultValue={0} id={a.id.replace(/-/g, '_')+'Value'}
+                    /><div>
                     <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.buy}> buy</div> <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.sell}> sell</div>
+                    </div>
+
 
                   </div>
-                  </div>
-                )
-              }
-              })}
 
 
             </div>
-          )
-        })}
+          )}}
+        ))})}
+
 
 
         </div>

@@ -1,7 +1,8 @@
-*{
+.ticker{
   color: rgb(74,246,38);
   background-color: black;
   font-family: Helvetica;
+  font-weight: bold;
 }
 
 
@@ -12,5 +13,10 @@
 }
 canvas{
   border: 1px solid white;
+
+}
+
+.is-ancestor{
+  flex-wrap: wrap;
 
 }
