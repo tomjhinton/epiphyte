@@ -1,6 +1,7 @@
 from pony.orm import db_session
 from app import db
 from models.User import User, UserSchema
+from models.Wallet import Wallet, WalletSchema
 
 
 db.drop_all_tables(with_all_data=True)
@@ -18,6 +19,9 @@ with db_session():
     username='Admin',
     email='Tomjhinton@gmail.com',
     password_hash=schema.generate_hash('pass'),
+    ),
+
+    Wallet(
     dollars=100.0,
     bitcoin=2.0,
     ethereum=2.0,

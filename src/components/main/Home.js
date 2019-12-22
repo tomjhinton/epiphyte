@@ -23,7 +23,8 @@ class Home extends React.Component{
       error: '',
       coins: {},
       user: { total:0
-      }
+      },
+      wallet:{}
 
     }
     this.componentDidMount = this.componentDidMount.bind(this)
@@ -43,12 +44,18 @@ class Home extends React.Component{
     if(Auth.isAuthenticated()){
     axios.get(`/api/users/${user.sub}`)
       .then(res => this.setState({user: res.data}))
+      axios.get(`/api/wallets/${user.sub}`)
+        .then(res => this.setState({wallet: res.data}))
     }
 
 
   }
 
   componentDidUpdate(prevProps){
+    if(this.state.wallet.dollars){
+    delete this.state.wallet.id
+    axios.put(`/api/wallets/${user.sub}`, this.state.wallet)
+  }
     if (prevProps !== this.props) {
       this.setState({coins: this.props.coins.data})
       console.log(this.state)
@@ -92,11 +99,11 @@ class Home extends React.Component{
     console.log('hiya '+e.target.id)
 
     const value = document.getElementById(e.target.id+'Value')
-    if(this.state.user.dollars> parseFloat(value.value)){
-    this.setState({user: {
-      ...this.state.user,
-      [e.target.id]: this.state.user[e.target.id] +(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
-      dollars: this.state.user.dollars -(parseFloat(value.value))}
+    if(this.state.wallet.dollars> parseFloat(value.value)){
+    this.setState({wallet: {
+      ...this.state.wallet,
+      [e.target.id]: this.state.wallet[e.target.id] +(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
+      dollars: this.state.wallet.dollars -(parseFloat(value.value))}
     })
   }
 
@@ -105,22 +112,23 @@ class Home extends React.Component{
   sell(e){
     console.log('hiya '+e.target.id)
     const value = document.getElementById(e.target.id+'Value')
-    if(this.state.user[e.target.id]-(parseFloat(value.value)/parseFloat(value.getAttribute('data-key')))>0 ){
-    this.setState({user: {
-      ...this.state.user,
-      [e.target.id]: this.state.user[e.target.id] -(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
-      dollars: this.state.user.dollars+parseFloat(value.value)}
-    })
+    if(this.state.wallet[e.target.id]-(parseFloat(value.value)/parseFloat(value.getAttribute('data-key')))>0 ){
+    this.setState({wallet: {
+      ...this.state.wallet,
+      [e.target.id]: this.state.wallet[e.target.id] -(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
+      dollars: this.state.wallet.dollars+parseFloat(value.value)}
+    }).then()
   }
+
   }
 
 
   render() {
-    dataValues=[this.state.user.dollars]
+    dataValues=[this.state.wallet.dollars]
     dataNames=['Dollars']
     dataColors = []
     console.log(this.state)
-    let values  = Object.entries(this.state.user)
+    let values  = Object.entries(this.state.wallet)
     values = values.map(x=>{
       return(
         [ x[0].replace(/_/g, '-'),x[1]])
@@ -139,7 +147,7 @@ class Home extends React.Component{
         })}
 
 
-        {Auth.isAuthenticated() &&this.props.coins && this.state.user && this.props.coins.data.map(x=>  {
+        {Auth.isAuthenticated() &&this.props.coins && this.state.wallet && this.props.coins.data.map(x=>  {
           return(
             <Ticker key={x.id} className='ticker' speed={Math.floor(Math.random()*6)+2} direction={direction[Math.floor(Math.random()*2)]}>
             {({ index }) => (
@@ -162,8 +170,8 @@ class Home extends React.Component{
         <canvas id="myChart" width="600" height="600"></canvas>
         </div>
         <div className='column'>
-          Portfolio Current Value: $ {this.state.user.total}</div>
-          Current Cash To Spend: {this.state.user.dollars}
+          Portfolio Current Value: $ {this.state.wallet.total}</div>
+          Current Cash To Spend: {this.state.wallet.dollars}
           </div>
 
         <div className="portfolio tile is-ancestor">
