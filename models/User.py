@@ -56,7 +56,7 @@ class UserSchema(Schema):
 
     # validate schema allows for custom error messages
     @validates_schema
-    def check_passwords(self, data):
+    def check_passwords(self, data, **kwargs):
         if data['password'] and data['password'] != data['password_confirmation']:
             raise ValidationError(
                 field_name='password_confirmation',
@@ -65,7 +65,7 @@ class UserSchema(Schema):
 
 
     @validates_schema
-    def validate_username(self, data):
+    def validate_username(self, data, **kwargs):
         user = User.get(username=data.get('username'))
 
         if user:
@@ -76,7 +76,7 @@ class UserSchema(Schema):
 
 
     @validates_schema
-    def validate_email(self, data):
+    def validate_email(self, data, **kwargs):
         user = User.get(email=data.get('email'))
 
         if user:
@@ -88,7 +88,7 @@ class UserSchema(Schema):
 
     # logic to perform AFTER validation but before save, to modify the data
     @post_load
-    def hash_password(self, data):
+    def hash_password(self, data, **kwargs):
         if data['password']:
             data['password_hash'] = self.generate_hash(data['password'])
 

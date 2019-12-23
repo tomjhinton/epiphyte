@@ -6,7 +6,30 @@ class Register extends React.Component{
     super()
     this.state ={
       data: {},
-      errors: {}
+      errors: {},
+      coins: {
+        dollars: 100.0,
+        bitcoin: 0.0,
+        ethereum: 0.0,
+        ripple: 0.0,
+        tether: 0.0,
+        bitcoin_cash: 0.0,
+        litecoin: 0.0,
+        eos: 0.0,
+        binance_coin: 0.0,
+        bitcoin_sv: 0.0,
+        cosmos: 0.0,
+        tezos: 0.0,
+        stellar: 0.0,
+        cardano: 0.0,
+        tron: 0.0,
+        unus_sed_leo: 0.0,
+        monero: 0.0,
+        huobi_token: 0.0,
+        chainlink: 0.0,
+        neo: 0.0,
+        maker: 0.0
+      }
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -23,11 +46,23 @@ class Register extends React.Component{
 
   handleSubmit(e) {
     e.preventDefault()
-
+    console.log(this.state.data)
     axios.post('/api/register', this.state.data)
-      .then(() => this.props.history.push('/login')) // redirect the user to the login page...
-      .catch(err => this.setState({ errors: err.response.data.errors }))
-  }
+       // redirect the user to the login page...
+      .catch(err => {
+        console.log(err)
+        this.setState({ errors: err.response.data.error })
+      })
+      .then( e=>{
+        if(!this.state.errors){
+        console.log(e)
+      axios.post('/api/wallets', this.state.coins)
+        .then(() => this.props.history.push('/login')) // redirect the user to the login page...
+        .catch(err => this.setState({ errors: err.response.data.errors }))
+      }
+    }
+      )
+   }
 
   render(){
 
@@ -59,19 +94,7 @@ class Register extends React.Component{
               </div>
               {this.state.errors.email && <div className="help is-danger">{this.state.errors.email}</div>}
             </div>
-            <div className="field">
-              <label className="label">Profile Image</label>
-              <div className="control">
-                <input
-                  className="input"
-                  name="image"
-                  type="text"
-                  placeholder="eg: https:myimages.com"
-                  onChange={this.handleChange}
-                />
-              </div>
-              {this.state.errors.image && <div className="help is-danger">{this.state.errors.image}</div>}
-            </div>
+
             <div className="field">
               <label className="label">Password</label>
               <div className="control">
@@ -90,7 +113,7 @@ class Register extends React.Component{
               <div className="control">
                 <input
                   className="input"
-                  name="passwordConfirmation"
+                  name="password_confirmation"
                   type="password"
                   placeholder="eg: ••••••••"
                   onChange={this.handleChange}
