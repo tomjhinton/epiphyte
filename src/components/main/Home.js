@@ -114,7 +114,7 @@ class Home extends React.Component{
   //  console.log('hiya '+e.target.id)
 
     const value = document.getElementById(e.target.id+'Value')
-    if(this.state.wallet.dollars> parseFloat(value.value)){
+    if(this.state.wallet.dollars>= parseFloat(value.value)){
       this.setState({wallet: {
         ...this.state.wallet,
         [e.target.id]: this.state.wallet[e.target.id] +(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
@@ -127,7 +127,7 @@ class Home extends React.Component{
   sell(e){
   //  console.log('hiya '+e.target.id)
     const value = document.getElementById(e.target.id+'Value')
-    if(this.state.wallet[e.target.id]-(parseFloat(value.value)/parseFloat(value.getAttribute('data-key')))>0 ){
+    if(this.state.wallet[e.target.id]-(parseFloat(value.value)/parseFloat(value.getAttribute('data-key')))>=0 ){
       this.setState({wallet: {
         ...this.state.wallet,
         [e.target.id]: this.state.wallet[e.target.id] -(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
@@ -139,9 +139,12 @@ class Home extends React.Component{
 
 
   render() {
+    if(dataColors.length>dataValues.length){
+      dataColors = []
+    }
     dataValues=[this.state.wallet.dollars]
     dataNames=['Dollars']
-    dataColors = []
+
     //console.log(this.state)
     let values  = Object.entries(this.state.wallet)
     values = values.map(x=>{
@@ -198,7 +201,9 @@ class Home extends React.Component{
                 // console.log(total)
 
                 dataNames.push(a.name)
-                dataColors.push(this.dynamicColors())
+                if(dataColors.length<dataNames.length){
+                  dataColors.push(this.dynamicColors())
+                }
                 return(
                   <div key={x[0]} className="tile is-3 is-parent box">
 
