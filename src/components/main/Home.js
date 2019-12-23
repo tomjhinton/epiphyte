@@ -7,11 +7,12 @@ import Chart from 'chart.js'
 import Ticker from 'react-ticker'
 
 
-let  dataValues
-let  dataNames
-let dataColors
+let  dataValues =[]
+let  dataNames =[]
+let dataColors =[]
 let  myChart
 let total
+let thing
 const user = Auth.getPayload()
 //console.log(user)
 let direction = ['toLeft', 'toRight']
@@ -22,9 +23,9 @@ class Home extends React.Component{
       data: {},
       error: '',
       coins: {},
-      user: { total:0
+      user: { total: 0
       },
-      wallet:{}
+      wallet: {}
 
     }
     this.componentDidMount = this.componentDidMount.bind(this)
@@ -41,10 +42,24 @@ class Home extends React.Component{
          };
 
   componentDidMount(){
-    if(Auth.isAuthenticated()){
+
+    if(this.props.history.location.state){
+    console.log(this.props.history.location.state.detail[0].sub)
+    thing = this.props.history.location.state.detail[0]
+  }
+    if(Auth.isAuthenticated()&& user ){
+      //console.log(user)
     axios.get(`/api/users/${user.sub}`)
       .then(res => this.setState({user: res.data}))
       axios.get(`/api/wallets/${user.sub}`)
+        .then(res => this.setState({wallet: res.data}))
+    }
+
+    if(Auth.isAuthenticated()&& this.props.history.location.state ){
+      console.log(thing.sub)
+    axios.get(`/api/users/${thing.sub}`)
+      .then(res => this.setState({user: res.data}))
+      axios.get(`/api/wallets/${thing.sub}`)
         .then(res => this.setState({wallet: res.data}))
     }
 
@@ -52,18 +67,18 @@ class Home extends React.Component{
   }
 
   componentDidUpdate(prevProps){
-    if(this.state.wallet.dollars){
+    if(this.state.wallet.dollars && user){
     delete this.state.wallet.id
     axios.put(`/api/wallets/${user.sub}`, this.state.wallet)
   }
     if (prevProps !== this.props) {
       this.setState({coins: this.props.coins.data})
-      console.log(this.state)
+      //console.log(this.state)
     }
     var ctx = document.getElementById('myChart');
     if(myChart){
       myChart.destroy()
-      console.log(myChart)
+      //console.log(myChart)
     }
      myChart = new Chart(ctx, {
         type: 'pie',
@@ -96,29 +111,29 @@ class Home extends React.Component{
   }
 
   buy(e){
-    console.log('hiya '+e.target.id)
+  //  console.log('hiya '+e.target.id)
 
     const value = document.getElementById(e.target.id+'Value')
     if(this.state.wallet.dollars> parseFloat(value.value)){
-    this.setState({wallet: {
-      ...this.state.wallet,
-      [e.target.id]: this.state.wallet[e.target.id] +(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
-      dollars: this.state.wallet.dollars -(parseFloat(value.value))}
-    })
-  }
+      this.setState({wallet: {
+        ...this.state.wallet,
+        [e.target.id]: this.state.wallet[e.target.id] +(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
+        dollars: this.state.wallet.dollars -(parseFloat(value.value))}
+      })
+    }
 
   }
 
   sell(e){
-    console.log('hiya '+e.target.id)
+  //  console.log('hiya '+e.target.id)
     const value = document.getElementById(e.target.id+'Value')
     if(this.state.wallet[e.target.id]-(parseFloat(value.value)/parseFloat(value.getAttribute('data-key')))>0 ){
-    this.setState({wallet: {
-      ...this.state.wallet,
-      [e.target.id]: this.state.wallet[e.target.id] -(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
-      dollars: this.state.wallet.dollars+parseFloat(value.value)}
-    }).then()
-  }
+      this.setState({wallet: {
+        ...this.state.wallet,
+        [e.target.id]: this.state.wallet[e.target.id] -(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
+        dollars: this.state.wallet.dollars+parseFloat(value.value)}
+      })
+    }
 
   }
 
@@ -127,13 +142,12 @@ class Home extends React.Component{
     dataValues=[this.state.wallet.dollars]
     dataNames=['Dollars']
     dataColors = []
-    console.log(this.state)
+    //console.log(this.state)
     let values  = Object.entries(this.state.wallet)
     values = values.map(x=>{
       return(
         [ x[0].replace(/_/g, '-'),x[1]])
     })
-    console.log(values)
 
 
     return (
@@ -150,14 +164,14 @@ class Home extends React.Component{
         {Auth.isAuthenticated() &&this.props.coins && this.state.wallet && this.props.coins.data.map(x=>  {
           return(
             <Ticker key={x.id} className='ticker' speed={Math.floor(Math.random()*6)+2} direction={direction[Math.floor(Math.random()*2)]}>
-            {({ index }) => (
+              {({ index }) => (
                 <>
 
             <div key={x.id}>
               {' '+ x.name +'  ' } : {x.priceUsd +' --   '  }
             </div>
             </>
-          )}
+              )}
 
             </Ticker>)
         })
@@ -166,48 +180,51 @@ class Home extends React.Component{
         <hr/>
         <div>Portfolio </div>
         <div className='columns'>
-        <div className='column is-half'>
-        <canvas id="myChart" width="600" height="600"></canvas>
-        </div>
-        <div className='column'>
+          <div className='column is-half'>
+            <canvas id="myChart" width="600" height="600"></canvas>
+          </div>
+          <div className='column'>
           Portfolio Current Value: $ {this.state.wallet.total}</div>
           Current Cash To Spend: {this.state.wallet.dollars}
-          </div>
+        </div>
 
         <div className="portfolio tile is-ancestor">
-        {values && this.props.coins && values.map(x=>{
-          return(
-            this.props.coins.data.map(a=> { if(x[0]===a.id){
+          {values && this.props.coins && values.map(x=>{
+            return(
+              this.props.coins.data.map(a=> { if(x[0]===a.id){
 
                 dataValues.push(a.priceUsd * x[1])
-                total =  dataValues.reduce((a,b)=> a+b,0)
-                console.log(total)
+                // total =  dataValues.reduce((a,b)=> a+b,0)
+                // console.log(total)
 
                 dataNames.push(a.name)
                 dataColors.push(this.dynamicColors())
                 return(
-            <div key={x[0]} className="tile is-3 is-parent box">
+                  <div key={x[0]} className="tile is-3 is-parent box">
 
 
-                  <div className="tile is-child box" >
+                    <div className="tile is-child box" >
 
-                    <div key={a.id}>
-                      <p className="title">{a.name}</p>
-                      <p>Current Coin Value :</p><p>{parseFloat(a.priceUsd).toFixed(7)}</p>
-                      <p>You hold:</p> <p>$ {parseFloat(a.priceUsd * x[1]).toFixed(7)}</p>
-                    </div>
+                      <div key={a.id}>
+                        <p className="title">{a.name}</p>
+                        <p>Current Coin Value :</p><p>{parseFloat(a.priceUsd).toFixed(7)}</p>
+                        <p>You hold:</p> <p>$ {parseFloat(a.priceUsd * x[1]).toFixed(7)}</p>
+                      </div>
                     $<input placeholder="$" key={a.priceUsd} data-key={a.priceUsd} type="number" defaultValue={0} id={a.id.replace(/-/g, '_')+'Value'}
-                    /><div>
-                    <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.buy}> buy</div> <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.sell}> sell</div>
+                      /><div>
+                        <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.buy}> buy</div> <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.sell}> sell</div>
+                      </div>
+
+
                     </div>
 
 
                   </div>
-
-
-            </div>
-          )}}
-        ))})}
+                )
+              }
+              }
+              ))
+          })}
 
 
 

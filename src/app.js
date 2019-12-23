@@ -28,7 +28,7 @@ class App extends React.Component {
   updateCoins(){
     axios.get('https://api.coincap.io/v2/assets')
       .then(res => {
-        console.log(res)
+        //console.log(res)
         res.data.data = res.data.data.filter(x=> {
           return coinsArr.includes(x.id)
         })
@@ -41,7 +41,7 @@ class App extends React.Component {
   componentDidMount() {
     axios.get('https://api.coincap.io/v2/assets')
       .then(res => {
-        console.log(res)
+        //console.log(res)
         res.data.data = res.data.data.filter(x=> {
           return coinsArr.includes(x.id)
         })
