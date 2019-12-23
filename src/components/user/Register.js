@@ -45,6 +45,7 @@ class Register extends React.Component{
   }
 
   handleSubmit(e) {
+    this.setState({ errors: '' })
     e.preventDefault()
     console.log(this.state.data)
     axios.post('/api/register', this.state.data)

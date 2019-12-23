@@ -41,6 +41,7 @@ class Header extends React.Component{
 
           <div className={`navbar-menu${this.state.active ? ' is-active' : ''}`}>
             <div className="navbar-start">
+            <Link to="/leaderboard" className="navbar-item">LeaderBoard</Link>
 
 
             </div>
@@ -53,7 +54,7 @@ class Header extends React.Component{
               {!Auth.isAuthenticated() && <Link to="/register" className="navbar-item">Register</Link>}
               {!Auth.isAuthenticated() && <Link to="/login" className="navbar-item">Login</Link>}
               {Auth.isAuthenticated() && <a className="navbar-item" onClick={this.logout}><strong>Logout</strong></a>}
-              
+
 
             </div>
           </div>

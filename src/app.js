@@ -11,6 +11,9 @@ import Header from './components/main/Header'
 import Footer from './components/main/Footer'
 import Login from './components/user/Login'
 import Register from './components/user/Register'
+import LeaderBoard from './components/main/LeaderBoard'
+
+
 
 const coinsArr = ['bitcoin','ethereum','ripple','tether','bitcoin-cash','litecoin','eos','binance-coin','bitcoin-sv','cosmos','tezos','stellar','cardano','tron','unus-sed-leo','monero','huobi-token','chainlink','neo','maker']
 
@@ -62,6 +65,7 @@ class App extends React.Component {
         <main>
           <Header />
           <Switch>
+            <Route path="/leaderboard" component={LeaderBoard} />
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
             <Route path="/"
