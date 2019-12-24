@@ -29,8 +29,8 @@ class LeaderBoard extends React.Component{
 
     axios.get('/api/users')
       .then(res => this.setState({users: res.data}))
-    axios.get('/api/wallets')
-      .then(res => this.setState({wallets: res.data}))
+      axios.get('/api/wallets')
+        .then(res => this.setState({wallets: res.data}))
 
 
 
@@ -38,7 +38,7 @@ class LeaderBoard extends React.Component{
   }
 
   componentDidUpdate(prevProps){
-    if (prevProps !== this.props) {
+    if (prevProps !== this.props && Auth.isAuthenticated()) {
       this.setState({coins: this.props.coins.data})
       //console.log(this.state)
     }
@@ -55,23 +55,38 @@ class LeaderBoard extends React.Component{
     return (
       <div className='container'>
 
-        {this.state.wallets && this.state.wallets.map(x=>  {
+        {this.state.wallets && this.props.coins&&   this.state.users && this.state.wallets.map(x=>  {
           return(
             this.state.users.map(a=>{
               if(a.id === x.id){
+
+                let total = x.dollars
+                let wal = Object.entries(x)
+                const coins=  Object.entries(this.props.coins.data)
+                wal  = wal.map(x=>{
+                  return(
+                    [ x[0].replace(/_/g, '-'),x[1]])
+                })
+                for(let i=0;i<wal.length;i++){
+                  for(let j=0;j<coins.length;j++){
+                    if(wal[i][0] === coins[j][1].id)
+                      total+= (wal[i][1] * coins[j][1].priceUsd)
+                  }
+                }
                 return(
 
                   <div key={a.id}>
-                    {a.username} {Object.values(x).reduce((t, n) => t + n)}
+                    {a.username}:
+                    <p>$:{total}</p>
                   </div>
+
                 )
               }
 
 
             })
 
-          )
-        }
+          )}
         )}
 
 
