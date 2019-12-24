@@ -7,15 +7,15 @@ import Chart from 'chart.js'
 import Ticker from 'react-ticker'
 
 
-let  dataValues =[]
+let  dataValues =[0]
 let  dataNames =[]
 let dataColors =[]
 let  myChart
 let total
 let thing
-const user = Auth.getPayload()
+let user = Auth.getPayload()
 //console.log(user)
-let direction = ['toLeft', 'toRight']
+const direction = ['toLeft', 'toRight']
 class Home extends React.Component{
   constructor(props){
     super(props)
@@ -33,32 +33,32 @@ class Home extends React.Component{
     this.sell = this.sell.bind(this)
 
   }
-   dynamicColors() {
-            var r = Math.floor(Math.random() * 255);
-            var g = Math.floor(Math.random() * 255);
-            var b = Math.floor(Math.random() * 255);
-            var a = 0.2;
-            return "rgba(" + r + "," + g + "," + b +","+a+ ")";
-         };
+  dynamicColors() {
+    var r = Math.floor(Math.random() * 255)
+    var g = Math.floor(Math.random() * 255)
+    var b = Math.floor(Math.random() * 255)
+    var a = 0.2
+    return 'rgba(' + r + ',' + g + ',' + b +','+a+ ')'
+  }
 
   componentDidMount(){
 
     if(this.props.history.location.state){
-    console.log(this.props.history.location.state.detail[0].sub)
-    thing = this.props.history.location.state.detail[0]
-  }
+      console.log(this.props.history.location.state.detail[0].sub)
+      thing = this.props.history.location.state.detail[0]
+    }
     if(Auth.isAuthenticated()&& user ){
       //console.log(user)
-    axios.get(`/api/users/${user.sub}`)
-      .then(res => this.setState({user: res.data}))
+      axios.get(`/api/users/${user.sub}`)
+        .then(res => this.setState({user: res.data}))
       axios.get(`/api/wallets/${user.sub}`)
         .then(res => this.setState({wallet: res.data}))
     }
 
     if(Auth.isAuthenticated()&& this.props.history.location.state ){
       console.log(thing.sub)
-    axios.get(`/api/users/${thing.sub}`)
-      .then(res => this.setState({user: res.data}))
+      axios.get(`/api/users/${thing.sub}`)
+        .then(res => this.setState({user: res.data}))
       axios.get(`/api/wallets/${thing.sub}`)
         .then(res => this.setState({wallet: res.data}))
     }
@@ -67,10 +67,12 @@ class Home extends React.Component{
   }
 
   componentDidUpdate(prevProps){
-    if(this.state.wallet.dollars && user){
-    delete this.state.wallet.id
-    axios.put(`/api/wallets/${user.sub}`, this.state.wallet)
-  }
+    user = Auth.getPayload()
+    if(this.state.wallet.dollars>=0 && user){
+      delete this.state.wallet.id
+      axios.put(`/api/wallets/${user.sub}`, this.state.wallet)
+      console.log('udpdate')
+    }
     if (prevProps !== this.props) {
       this.setState({coins: this.props.coins.data})
       //console.log(this.state)
@@ -106,7 +108,7 @@ class Home extends React.Component{
             }
         }
   }
-});
+})
 
   }
 
@@ -120,6 +122,12 @@ class Home extends React.Component{
         [e.target.id]: this.state.wallet[e.target.id] +(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
         dollars: this.state.wallet.dollars -(parseFloat(value.value))}
       })
+
+      delete this.state.wallet.id
+      axios.put(`/api/wallets/${user.sub}`, this.state.wallet)
+      console.log(this.state.wallet)
+      console.log('buy')
+      this.update()
     }
 
   }
@@ -133,12 +141,23 @@ class Home extends React.Component{
         [e.target.id]: this.state.wallet[e.target.id] -(parseFloat(value.value)/parseFloat(value.getAttribute('data-key'))),
         dollars: this.state.wallet.dollars+parseFloat(value.value)}
       })
+      delete this.state.wallet.id
+      axios.put(`/api/wallets/${user.sub}`, this.state.wallet)
+      console.log(this.state.wallet)
+      console.log('sell')
+      this.update()
     }
 
   }
 
-
+  update(){
+    delete this.state.wallet.id
+    axios.put(`/api/wallets/${user.sub}`, this.state.wallet)
+    console.log(this.state)
+  }
   render() {
+    total = Object.values(dataValues).reduce((t, n) => t + n)
+    //console.log(this.state)
     if(dataColors.length>dataValues.length){
       dataColors = []
     }
@@ -186,9 +205,10 @@ class Home extends React.Component{
           <div className='column is-half'>
             <canvas id="myChart" width="600" height="600"></canvas>
           </div>
-          <div className='column'>
-          Portfolio Current Value: $ {this.state.wallet.total}</div>
-          Current Cash To Spend: {this.state.wallet.dollars}
+          <div className='column stats'>
+          <p>Portfolio Current Value: $ {total}</p>
+          <p>Current Cash To Spend:$ {this.state.wallet.dollars}</p>
+        </div>
         </div>
 
         <div className="portfolio tile is-ancestor">
@@ -197,6 +217,7 @@ class Home extends React.Component{
               this.props.coins.data.map(a=> { if(x[0]===a.id){
 
                 dataValues.push(a.priceUsd * x[1])
+                total = Object.values(dataValues).reduce((t, n) => t + n)
                 // total =  dataValues.reduce((a,b)=> a+b,0)
                 // console.log(total)
 

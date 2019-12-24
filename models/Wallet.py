@@ -30,6 +30,7 @@ class Wallet(db.Entity):
     chainlink = Required(float)
     neo = Required(float)
     maker = Required(float)
+    
 
 
 

@@ -29,16 +29,19 @@ class LeaderBoard extends React.Component{
 
     axios.get('/api/users')
       .then(res => this.setState({users: res.data}))
-      axios.get('/api/wallets')
-        .then(res => this.setState({wallets: res.data}))
+    axios.get('/api/wallets')
+      .then(res => this.setState({wallets: res.data}))
 
 
 
 
   }
 
-  componentDidUpdate(){
-
+  componentDidUpdate(prevProps){
+    if (prevProps !== this.props) {
+      this.setState({coins: this.props.coins.data})
+      //console.log(this.state)
+    }
   }
 
 
@@ -53,20 +56,23 @@ class LeaderBoard extends React.Component{
       <div className='container'>
 
         {this.state.wallets && this.state.wallets.map(x=>  {
-            return(
-          this.state.users.map(a=>{
-            return(
+          return(
+            this.state.users.map(a=>{
+              if(a.id === x.id){
+                return(
 
-              <div key={a.id}>
-                {x.id} {a.id}
-              </div>
-            )
+                  <div key={a.id}>
+                    {a.username} {Object.values(x).reduce((t, n) => t + n)}
+                  </div>
+                )
+              }
 
 
-          })
+            })
 
+          )
+        }
         )}
-      )}
 
 
 
@@ -74,7 +80,7 @@ class LeaderBoard extends React.Component{
 
 
 
-        </div>
+      </div>
 
 
 

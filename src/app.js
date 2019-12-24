@@ -65,7 +65,8 @@ class App extends React.Component {
         <main>
           <Header />
           <Switch>
-            <Route path="/leaderboard" component={LeaderBoard} />
+            <Route path="/leaderboard"
+              render={(state) => <LeaderBoard {...state} coins={this.state.coins} />} />
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
             <Route path="/"
