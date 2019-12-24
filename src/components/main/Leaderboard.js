@@ -29,10 +29,14 @@ class LeaderBoard extends React.Component{
 
     axios.get('/api/users')
       .then(res => this.setState({users: res.data}))
-      axios.get('/api/wallets')
-        .then(res => this.setState({wallets: res.data}))
+    axios.get('/api/wallets')
+      .then(res => this.setState({wallets: res.data}))
 
-
+      if(Auth.isAuthenticated()&& user ){
+        //console.log(user)
+        axios.get(`/api/users/${user.sub}`)
+          .then(res => this.setState({user: res.data}))
+        }
 
 
   }
@@ -51,50 +55,53 @@ class LeaderBoard extends React.Component{
   render() {
 
     console.log(this.state)
-
+    let board = []
     return (
       <div className='container'>
+        <ol>
+          {this.state.wallets && this.props.coins&&   this.state.users && this.state.wallets.map(x=>  {
+            return(
+              this.state.users.map(a=>{
+                if(a.id === x.id){
 
-        {this.state.wallets && this.props.coins&&   this.state.users && this.state.wallets.map(x=>  {
-          return(
-            this.state.users.map(a=>{
-              if(a.id === x.id){
-
-                let total = x.dollars
-                let wal = Object.entries(x)
-                const coins=  Object.entries(this.props.coins.data)
-                wal  = wal.map(x=>{
-                  return(
-                    [ x[0].replace(/_/g, '-'),x[1]])
-                })
-                for(let i=0;i<wal.length;i++){
-                  for(let j=0;j<coins.length;j++){
-                    if(wal[i][0] === coins[j][1].id)
-                      total+= (wal[i][1] * coins[j][1].priceUsd)
+                  let total = x.dollars
+                  let wal = Object.entries(x)
+                  const coins=  Object.entries(this.props.coins.data)
+                  wal  = wal.map(x=>{
+                    return(
+                      [ x[0].replace(/_/g, '-'),x[1]])
+                  })
+                  for(let i=0;i<wal.length;i++){
+                    for(let j=0;j<coins.length;j++){
+                      if(wal[i][0] === coins[j][1].id)
+                        total+= (wal[i][1] * coins[j][1].priceUsd)
+                    }
                   }
+                  board.push([a.username, total])
+
                 }
-                return(
-
-                  <div key={a.id}>
-                    {a.username}:
-                    <p>$:{total}</p>
-                  </div>
-
-                )
-              }
 
 
-            })
+              })
 
-          )}
-        )}
-
-
-
-
+            )
+          }
+          )
+          }
+          <ol>
+            {board.sort((a,b)=> b[1]-a[1],0).map(x=>{
+              return(
+                <li key={x[0]} className={x[0] === this.state.user.username ? 'user': 'notuser'}>
+                  {x[0]}: ${x[1]}
+                </li>
+              )
+            })}
+          </ol>
 
 
 
+
+        </ol>
       </div>
 
 

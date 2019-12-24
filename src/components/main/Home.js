@@ -233,7 +233,7 @@ class Home extends React.Component{
 
                       <div key={a.id}>
                         <p className="title">{a.name}</p>
-                        <p>Current Coin Value :</p><p>{parseFloat(a.priceUsd).toFixed(7)}</p>
+                        <p>Current Coin Value :</p><p>${parseFloat(a.priceUsd).toFixed(7)}</p>
                         <p>You hold:</p> <p>$ {parseFloat(a.priceUsd * x[1]).toFixed(7)}</p>
                       </div>
                     $<input placeholder="$" key={a.priceUsd} data-key={a.priceUsd} type="number" defaultValue={0} id={a.id.replace(/-/g, '_')+'Value'}
