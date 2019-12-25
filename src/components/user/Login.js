@@ -39,7 +39,8 @@ class Login extends React.Component{
   render() {
     console.log(this.state)
     return (
-      <div>
+      <div className='container'>
+
         <div className="title section form-title">Login</div>
         <div className="user-form">
           <form onSubmit={this.handleSubmit}>
@@ -50,6 +51,7 @@ class Login extends React.Component{
                 name="email"
                 placeholder="eg: jack@hotmail.com"
                 onChange={this.handleChange}
+                
               />
             </div>
             <div className="field">

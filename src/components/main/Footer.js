@@ -28,7 +28,8 @@ class Footer extends React.Component{
     return (
 
       <div className='footer'>
-      created by
+      “Gold is the corpse of value...”
+      ― Neal Stephenson, Cryptonomicon
       </div>
 
 

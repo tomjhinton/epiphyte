@@ -69,7 +69,7 @@ class Register extends React.Component{
 
     return(
 
-      <section>
+      <div className='container'>
         <div className="title section form-title">Register</div>
         <div className="user-form">
           <form onSubmit={this.handleSubmit}>
@@ -125,7 +125,7 @@ class Register extends React.Component{
             <button>Submit</button>
           </form>
         </div>
-      </section>
+      </div>
     )
   }
 }

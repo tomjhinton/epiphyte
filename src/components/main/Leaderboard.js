@@ -55,7 +55,7 @@ class LeaderBoard extends React.Component{
   render() {
 
     console.log(this.state)
-    let board = []
+    const board = []
     return (
       <div className='container'>
         <ol>
@@ -89,7 +89,7 @@ class LeaderBoard extends React.Component{
           )
           }
           <ol>
-            {board.sort((a,b)=> b[1]-a[1],0).map(x=>{
+            {this.state.user && board.sort((a,b)=> b[1]-a[1],0).map(x=>{
               return(
                 <li key={x[0]} className={x[0] === this.state.user.username ? 'user': 'notuser'}>
                   {x[0]}: ${x[1]}

@@ -1,3 +1,9 @@
+@font-face {
+  font-family: "Ferrite";
+  src: url("assets/FerriteCore-Regular.otf") format("opentype");
+}
+
+
 *{
   font-family: Helvetica;
 }
@@ -34,5 +40,32 @@ canvas{
 }
 
 .user{
-  color:red;
+  color:blue;
+  animation: pulse 2s infinite linear;
+  animation-direction: alternate-reverse;
+}
+@keyframes pulse {
+  from {color: red;
+      font-size: 1em;
+        }
+  to {color: green;
+    font-size: 1.5em;}
+}
+
+.input{
+  width: 50%;
+}
+
+.logo{
+  font-family: 'Ferrite';
+  font-size: 3em;
+  color: rgba(0,0,0, 0.5);
+}
+
+.footer{
+  flex-shrink: 0;
+  font-family: 'Ferrite';
+
+  
+
 }
