@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom'
 import Auth from '../../lib/Auth'
 import Chart from 'chart.js'
 import Ticker from 'react-ticker'
-import {Spring} from 'react-spring/renderprops'
+import {Spring, config} from 'react-spring/renderprops'
 
 
 let  dataValues =[0]
@@ -238,10 +238,11 @@ class Home extends React.Component{
                             <p className="title">{a.name}</p>
                             <p>Current Coin Value :</p><p>${parseFloat(a.priceUsd).toFixed(7)}</p>
                             <p>You hold:</p>    <Spring
+                              config={config.molasses}
                               from={{ number: 0 }}
-                              to={{ number: parseFloat(a.priceUsd).toFixed(7)} }>
+                              to={{ number: parseFloat(a.priceUsd).toFixed(7)*x[1]} }>
                               {props => <div>${props.number}</div>}
-                              </Spring>
+                            </Spring>
                           </div>
 
                           $<input placeholder="$" key={a.priceUsd} data-key={a.priceUsd} type="number" defaultValue={0} id={a.id.replace(/-/g, '_')+'Value'}
