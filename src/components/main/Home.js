@@ -12,6 +12,7 @@ let  dataValues =[0]
 let  dataNames =[]
 let dataColors =[]
 let  myChart
+let histChart
 let total
 let thing
 let user = Auth.getPayload()
@@ -32,6 +33,7 @@ class Home extends React.Component{
     this.componentDidMount = this.componentDidMount.bind(this)
     this.buy = this.buy.bind(this)
     this.sell = this.sell.bind(this)
+    this.history = this.history.bind(this)
 
   }
   dynamicColors() {
@@ -158,6 +160,58 @@ class Home extends React.Component{
     axios.put(`/api/wallets/${user.sub}`, this.state.wallet)
     console.log(this.state)
   }
+
+  history(e){
+    e.persist()
+    console.log()
+    const name = e.target.id
+    const val = [2,4,6]
+    if(histChart){
+      histChart.destroy()
+      //console.log(histChart)
+    }
+    axios.get(`https://cors-anywhere.herokuapp.com/api.coincap.io/v2/assets/${e.target.id}/history?interval=d1
+`)
+      .then(res => {
+        var ctx = document.getElementById(e.target.id+'Chart')
+        console.log(res.data)
+
+        histChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: res.data.data.map(x=> x = x.date),
+            datasets: [{
+              label: {name},
+              data: res.data.data.map(x=> x = parseFloat(x.priceUsd)),
+              backgroundColor: dataColors,
+              borderColor: dataColors.map(x=> x = x.replace(/0.2/g, '1')),
+              borderWidth: 1
+            }]
+          },
+          options: {
+
+            tooltips: {
+              enabled: true
+            },
+
+            responsive: false,
+            legend: {
+              labels: {
+                // This more specific font property overrides the global property
+                fontSize: 24
+              }
+            }
+          }
+        })
+
+
+
+
+      })
+
+
+  }
+
   render() {
 
     total = Object.values(dataValues).reduce((t, n) => t + n)
@@ -235,7 +289,7 @@ class Home extends React.Component{
                         <div className="tile is-child box" >
 
                           <div key={a.id}>
-                            <p className="title">{a.name}</p>
+                            <p className="title" id={a.id} onClick={this.history}>{a.name}</p>
                             <p>Current Coin Value :</p><p>${parseFloat(a.priceUsd).toFixed(7)}</p>
                             <p>You hold:</p>    <Spring
                               config={config.molasses}
@@ -252,6 +306,7 @@ class Home extends React.Component{
 
 
                         </div>
+                      <canvas height={500} width ={500} id={a.id+'Chart'}> </canvas>
 
 
                       </div>
