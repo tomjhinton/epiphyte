@@ -1,7 +1,6 @@
 //pic size 687*687
 import React from 'react'
 import axios from 'axios'
-import {Link} from 'react-router-dom'
 import Auth from '../../lib/Auth'
 import Chart from 'chart.js'
 import Ticker from 'react-ticker'
@@ -79,12 +78,12 @@ class Home extends React.Component{
     }
     if (prevProps !== this.props) {
       this.setState({coins: this.props.coins.data})
-      //console.log(this.state)
+
     }
     var ctx = document.getElementById('myChart')
     if(myChart){
       myChart.destroy()
-      //console.log(myChart)
+
     }
     if(Auth.isAuthenticated()){
       myChart = new Chart(ctx, {
@@ -170,12 +169,16 @@ class Home extends React.Component{
 
   history(e){
     var modal =  document.getElementById(e.target.id+'Modal')
-    modal.classList.add("is-active")
+    modal.classList.add('is-active')
     e.persist()
     console.log()
     const name = e.target.id
     console.log(name)
-    var ctx = document.getElementById(e.target.id+'Chart')
+    var canvas = document.getElementById(e.target.id+'Chart')
+    var ctx = canvas.getContext('2d')
+    ctx.font = '40px Helvetica'
+    ctx.fillText('Loading Coin Data ...', 10, 50)
+
     if(histChart){
       histChart.destroy()
       //console.log(histChart)
@@ -186,20 +189,30 @@ class Home extends React.Component{
 
         console.log(res.data)
 
-        histChart = new Chart(ctx, {
+        histChart = new Chart(canvas, {
           type: 'line',
           data: {
-            labels: res.data.data.map(x=> x = x.date),
+            labels: res.data.data.map(x=> x = x.date.split('T')[0]),
             datasets: [{
               label: name,
               data: res.data.data.map(x=> x = parseFloat(x.priceUsd)),
-              backgroundColor: res.data.data.map(x=> x = this.dynamicColors()),
+              backgroundColor: res.data.data.map(x => x = this.dynamicColors()),
               borderColor: dataColors.map(x=> x = x.replace(/0.2/g, '1')),
               borderWidth: 1
             }]
+
           },
           options: {
-
+            scales: {
+              yAxes: [{
+                ticks: {
+                  // Include a dollar sign in the ticks
+                  callback: function(value, index, values) {
+                    return '$' + value
+                  }
+                }
+              }]
+            },
             tooltips: {
               enabled: true
             },
@@ -224,15 +237,31 @@ class Home extends React.Component{
 
   render() {
 
-    total = Object.values(dataValues).reduce((t, n) => t + n)
-    //console.log(this.state)
+    if(this.props.coins &&this.state.user){
+
+      total = this.state.wallet.dollars
+      let wal = Object.entries(this.state.wallet)
+      const coins =  Object.entries(this.props.coins.data)
+      wal = wal.map(x=>{
+        console.log(x)
+        return(
+          [ x[0].replace(/_/g, '-'),x[1]])
+      })
+      for(let i=0;i<wal.length;i++){
+        for(let j=0;j<coins.length;j++){
+          if(wal[i][0] === coins[j][1].id)
+            total+= (wal[i][1] * coins[j][1].priceUsd)
+        }
+      }
+    }
+
+
     if(dataColors.length>dataValues.length){
       dataColors = []
     }
     dataValues=[this.state.wallet.dollars]
     dataNames=['Dollars']
 
-    //console.log(this.state)
     let values  = Object.entries(this.state.wallet)
     values = values.map(x=>{
       return(
@@ -267,15 +296,22 @@ class Home extends React.Component{
         })
         }
         {Auth.isAuthenticated() && <div>
+
           <hr/>
-          <div>Portfolio </div>
+          <div className='portTitle'>Portfolio </div>
           <div className='columns'>
             <div className='column is-half'>
               <canvas id="myChart" width="600" height="600"></canvas>
             </div>
             <div className='column stats'>
-              <p>Portfolio Current Value: $ {total}</p>
-              <p>Current Cash To Spend:$ {this.state.wallet.dollars}</p>
+              <p>Portfolio Current Value:
+                <Spring
+                  config={config.molasses}
+                  from={{ number: 0 }}
+                  to={{ number: total} }>
+                  {props => <span>${props.number}</span>}
+                </Spring></p>
+              <p>Current Cash To Spend:$ {parseFloat(this.state.wallet.dollars).toFixed(2)}</p>
             </div>
           </div>
 
@@ -299,9 +335,10 @@ class Home extends React.Component{
                         <div className="tile is-child box" >
 
                           <div key={a.id}>
-                            <p className="title" id={a.id} onClick={this.history}>{a.name}</p>
+                            <p className="title history" id={a.id} onClick={this.history}>{a.name}</p>
                             <p>Current Coin Value :</p><p>${parseFloat(a.priceUsd).toFixed(7)}</p>
-                            <p>You hold:</p>    <Spring
+                            <p>You hold:</p>
+                            <Spring
                               config={config.molasses}
                               from={{ number: 0 }}
                               to={{ number: parseFloat(a.priceUsd).toFixed(7)*x[1]} }>
@@ -309,14 +346,15 @@ class Home extends React.Component{
                             </Spring>
                           </div>
 
-                          $<input placeholder="$" key={a.priceUsd} data-key={a.priceUsd} type="number" defaultValue={0} id={a.id.replace(/-/g, '_')+'Value'}
+                          $<input className="inputBS" placeholder="$" key={a.priceUsd} data-key={a.priceUsd} type="number" defaultValue={0} id={a.id.replace(/-/g, '_')+'Value'}
                           /><div>
                             <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.buy}> buy</div> <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.sell}> sell</div>
                           </div>
                           <div className="modal" id={a.id+'Modal'}>
                             <div className="modal-background"></div>
                             <div className="modal-content">
-                              <canvas height={500} width ={500} id={a.id+'Chart'}> </canvas>  
+                              <div>Historical Coin Value </div>
+                              <canvas height={500} width ={500} id={a.id+'Chart'}> </canvas>
                             </div>
                             <button className="modal-close is-large" onClick={this.toggleActive} aria-label="close"></button>
                           </div>

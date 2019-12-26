@@ -51,9 +51,9 @@ class App extends React.Component {
         this.setState({ coins: res.data })
       })
 
-      this.interval = setInterval(() => {
-        this.updateCoins();
-      }, 100000);
+    this.interval = setInterval(() => {
+      this.updateCoins()
+    }, 100000)
   }
 
 

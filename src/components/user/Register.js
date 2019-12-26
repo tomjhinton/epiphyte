@@ -49,21 +49,21 @@ class Register extends React.Component{
     e.preventDefault()
     console.log(this.state.data)
     axios.post('/api/register', this.state.data)
-       // redirect the user to the login page...
+      // redirect the user to the login page...
       .catch(err => {
         console.log(err)
         this.setState({ errors: err.response.data.error })
       })
       .then( e=>{
         if(!this.state.errors){
-        console.log(e)
-      axios.post('/api/wallets', this.state.coins)
-        .then(() => this.props.history.push('/login')) // redirect the user to the login page...
-        .catch(err => this.setState({ errors: err.response.data.errors }))
+
+          axios.post('/api/wallets', this.state.coins)
+            .then(() => this.props.history.push('/login')) // redirect the user to the login page...
+            .catch(err => this.setState({ errors: err.response.data.errors }))
+        }
       }
-    }
       )
-   }
+  }
 
   render(){
 

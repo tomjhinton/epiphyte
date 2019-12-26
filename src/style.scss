@@ -53,6 +53,13 @@ canvas{
 
 .input{
   width: 50%;
+  border: none;
+}
+
+.inputBS{
+  border: none;
+  border-bottom: 1px solid grey;
+  margin-bottom: 5px;
 }
 
 .logo{
@@ -69,10 +76,24 @@ canvas{
 
 }
 
+
+.leadLink{
+  font-family: 'Ferrite';
+}
+
 .modal-background {
     background-color: rgba(255, 255, 255, 1);
 }
 
 .modal-close{
 background-color: black;
+}
+
+.history{
+  cursor: pointer;
+
+}
+.portTitle{
+  font-family: 'Ferrite';
+  font-size:2em;
 }

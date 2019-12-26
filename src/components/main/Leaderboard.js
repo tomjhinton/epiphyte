@@ -1,7 +1,6 @@
 //pic size 687*687
 import React from 'react'
 import axios from 'axios'
-import {Link} from 'react-router-dom'
 import Auth from '../../lib/Auth'
 
 
@@ -32,11 +31,11 @@ class LeaderBoard extends React.Component{
     axios.get('/api/wallets')
       .then(res => this.setState({wallets: res.data}))
 
-      if(Auth.isAuthenticated()&& user ){
-        //console.log(user)
-        axios.get(`/api/users/${user.sub}`)
-          .then(res => this.setState({user: res.data}))
-        }
+    if(Auth.isAuthenticated()&& user ){
+      //console.log(user)
+      axios.get(`/api/users/${user.sub}`)
+        .then(res => this.setState({user: res.data}))
+    }
 
 
   }
