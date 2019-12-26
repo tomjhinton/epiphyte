@@ -34,6 +34,7 @@ class Home extends React.Component{
     this.buy = this.buy.bind(this)
     this.sell = this.sell.bind(this)
     this.history = this.history.bind(this)
+    this.toggleActive = this.toggleActive.bind(this)
 
   }
   dynamicColors() {
@@ -87,7 +88,7 @@ class Home extends React.Component{
     }
     if(Auth.isAuthenticated()){
       myChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
           labels: dataNames,
           datasets: [{
@@ -161,11 +162,20 @@ class Home extends React.Component{
     console.log(this.state)
   }
 
+  toggleActive(e){
+    console.log(e.target.parentNode)
+    e.target.parentNode.classList.remove('is-active')
+
+  }
+
   history(e){
+    var modal =  document.getElementById(e.target.id+'Modal')
+    modal.classList.add("is-active")
     e.persist()
     console.log()
     const name = e.target.id
-    const val = [2,4,6]
+    console.log(name)
+    var ctx = document.getElementById(e.target.id+'Chart')
     if(histChart){
       histChart.destroy()
       //console.log(histChart)
@@ -173,7 +183,7 @@ class Home extends React.Component{
     axios.get(`https://cors-anywhere.herokuapp.com/api.coincap.io/v2/assets/${e.target.id}/history?interval=d1
 `)
       .then(res => {
-        var ctx = document.getElementById(e.target.id+'Chart')
+
         console.log(res.data)
 
         histChart = new Chart(ctx, {
@@ -181,9 +191,9 @@ class Home extends React.Component{
           data: {
             labels: res.data.data.map(x=> x = x.date),
             datasets: [{
-              label: {name},
+              label: name,
               data: res.data.data.map(x=> x = parseFloat(x.priceUsd)),
-              backgroundColor: dataColors,
+              backgroundColor: res.data.data.map(x=> x = this.dynamicColors()),
               borderColor: dataColors.map(x=> x = x.replace(/0.2/g, '1')),
               borderWidth: 1
             }]
@@ -194,7 +204,7 @@ class Home extends React.Component{
               enabled: true
             },
 
-            responsive: false,
+            responsive: true,
             legend: {
               labels: {
                 // This more specific font property overrides the global property
@@ -303,10 +313,17 @@ class Home extends React.Component{
                           /><div>
                             <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.buy}> buy</div> <div id={a.id.replace(/-/g, '_')} className='button' onClick={this.sell}> sell</div>
                           </div>
+                          <div className="modal" id={a.id+'Modal'}>
+                            <div className="modal-background"></div>
+                            <div className="modal-content">
+                              <canvas height={500} width ={500} id={a.id+'Chart'}> </canvas>  
+                            </div>
+                            <button className="modal-close is-large" onClick={this.toggleActive} aria-label="close"></button>
+                          </div>
 
 
                         </div>
-                      <canvas height={500} width ={500} id={a.id+'Chart'}> </canvas>
+
 
 
                       </div>
