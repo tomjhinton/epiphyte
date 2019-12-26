@@ -22,7 +22,6 @@
 
 }
 canvas{
-  border: 1px solid white;
 
 }
 
@@ -68,4 +67,12 @@ canvas{
 
 
 
+}
+
+.modal-background {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.modal-close{
+background-color: black;
 }
