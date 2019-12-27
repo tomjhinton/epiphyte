@@ -273,9 +273,23 @@ class Home extends React.Component{
     return (
       <div className='container'>
 
-        {!Auth.isAuthenticated() &&
+        {!Auth.isAuthenticated() && this.props.coins &&
             <div >
-              Trade Crypto
+              {this.props.coins.data.map(x=>  {
+                return(
+
+                  <Ticker key={x.id} className='ticker' speed={Math.floor(Math.random()*6)+2} direction={direction[Math.floor(Math.random()*2)]}>
+                    {({ index }) => (
+                      <>
+
+                  <div key={x.id}>
+                    {' '+ x.name +'  ' } : {x.priceUsd +' --   '  }
+                  </div>
+                  </>
+                    )}
+
+                  </Ticker>)
+              })}
             </div>
         }
 

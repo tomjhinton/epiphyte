@@ -1,12 +1,10 @@
+
 @font-face {
   font-family: "Ferrite";
   src: url("assets/FerriteCore-Regular.otf") format("opentype");
 }
 
 
-*{
-  font-family: 'Helvetica';
-}
 
 .ticker{
   color: rgb(74,246,38);
@@ -112,5 +110,6 @@ background-color: black;
   text-align: right;
   font-size: 30px;
   padding: 15px;
-  margin-left: 60%;
+  margin-left: 70%;
+  margin-right: 10%;
 }
