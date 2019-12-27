@@ -12,6 +12,7 @@ import Footer from './components/main/Footer'
 import Login from './components/user/Login'
 import Register from './components/user/Register'
 import LeaderBoard from './components/main/Leaderboard'
+import FlashMessages from './components/main/FlashMessages'
 
 
 
@@ -64,6 +65,7 @@ class App extends React.Component {
       <Router>
         <main>
           <Header />
+          <FlashMessages />
           <Switch>
             <Route path="/leaderboard"
               render={(state) => <LeaderBoard {...state} coins={this.state.coins} />} />

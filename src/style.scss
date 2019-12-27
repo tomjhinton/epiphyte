@@ -102,3 +102,15 @@ background-color: black;
   font-size: 1.5em;
   font-weight: bold;
 }
+
+.flash-message{
+  z-index: 2;
+  position: absolute;
+  font-family: 'Ferrite';
+  background-color:black;
+  color:rgb(74,246,38);
+  text-align: right;
+  font-size: 30px;
+  padding: 15px;
+  margin-left: 60%;
+}
