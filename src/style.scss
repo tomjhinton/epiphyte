@@ -34,9 +34,7 @@ canvas{
 }
 
 
-.stats{
 
-}
 
 .user{
   color:blue;
@@ -96,4 +94,11 @@ background-color: black;
 .portTitle{
   font-family: 'Ferrite';
   font-size:2em;
+}
+.stats{
+  align-items: center;
+  flex: auto;
+  margin: auto;
+  font-size: 1.5em;
+  font-weight: bold;
 }

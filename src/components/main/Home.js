@@ -91,7 +91,7 @@ class Home extends React.Component{
         data: {
           labels: dataNames,
           datasets: [{
-            label: '# of Votes',
+
             data: dataValues,
             backgroundColor: dataColors,
             borderColor: dataColors.map(x=> x = x.replace(/0.2/g, '1')),
@@ -104,6 +104,7 @@ class Home extends React.Component{
             enabled: true
           },
 
+
           responsive: true,
           legend: {
             labels: {
@@ -113,7 +114,7 @@ class Home extends React.Component{
           }
         }
       })
-
+      console.log(myChart)
     }
   }
 
@@ -304,14 +305,14 @@ class Home extends React.Component{
               <canvas id="myChart" width="600" height="600"></canvas>
             </div>
             <div className='column stats'>
-              <p>Portfolio Current Value:
+              <p>Portfolio Value:
                 <Spring
                   config={config.molasses}
                   from={{ number: 0 }}
                   to={{ number: total} }>
-                  {props => <span>${props.number}</span>}
+                  {props => <span> ${props.number}</span>}
                 </Spring></p>
-              <p>Current Cash To Spend:$ {parseFloat(this.state.wallet.dollars).toFixed(2)}</p>
+              <p>Current Cash To Spend: ${parseFloat(this.state.wallet.dollars).toFixed(2)}</p>
             </div>
           </div>
 
