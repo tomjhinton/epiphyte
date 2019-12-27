@@ -11,7 +11,7 @@ import Header from './components/main/Header'
 import Footer from './components/main/Footer'
 import Login from './components/user/Login'
 import Register from './components/user/Register'
-import LeaderBoard from './components/main/LeaderBoard'
+import LeaderBoard from './components/main/Leaderboard'
 
 
 
